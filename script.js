@@ -2,13 +2,12 @@ const players = (function(){
     const createPlayer = function (name){
         let score = 0;
         let sign = "";
-        let turns = "";
-        let firstTurn = false;
+        let turns = 0;
         const getName = () => name;
         const increaseScore = () => score++;
         const getScore = () => score;
         const resetScore = () => score = 0;
-        const setSignX = () => sign = "X";
+        const setSignX = () => sign = "X"; // The first player gets the "X" sign
         const setSignY = () => sign = "Y";
         const getSign = () => sign;
         const increaseTurns = () => turns++;
@@ -48,29 +47,55 @@ const gameBoard = (function(){
 })();
 
 const playGame = (function(){
-    let turns = players.playerList.one.getTurns() + players.playerList.one.getTurns();
-    const makeTurn = (function(){
-        const setTurn = (player, vertical, horizontal) => {
-            if(turns == 0){
-                players.playerList[player].setSignX();
-                if(player == "one"){
-                    players.playerList.two.setSignY();
-                } else if(player == "two"){
-                    players.playerList.one.setSignY();
-                }
-            }
-            const playerSign = players.playerList[player].getSign();
-            gameBoard.setBoardEntry(vertical, horizontal, playerSign);
+    let firstTurnPlayerOfTheMatch = "";
+    let lastTurn = "";
+
+    const setFirstTurnPlayerOfTheMatch = (function(){
+        const one = () => {
+            firstTurnPlayerOfTheMatch = "one";
+            players.playerList.one.setSignX();
+            players.playerList.two.setSignY();
+        };
+        const two = () => {
+            firstTurnPlayerOfTheMatch = "two";
+            players.playerList.two.setSignX();
+            players.playerList.one.setSignY();
         }
-        const one = (verticalPositionChoice, horizontalPositionChoice) => setTurn("one", verticalPositionChoice, horizontalPositionChoice);
-        const two = (verticalPositionChoice, horizontalPositionChoice) => setTurn("two", verticalPositionChoice, horizontalPositionChoice);
-        return {one, two};
+        return {one, two}
     })();
 
+    const makeTurn = function(verticalPositionChoice, horizontalPositionChoice){
+        if(!gameBoard.getBoardEntry(verticalPositionChoice, horizontalPositionChoice)){
+            let turns = players.playerList.one.getTurns() + players.playerList.one.getTurns();
+            if(turns == 0){
+                if(firstTurnPlayerOfTheMatch == "one"){
+                    gameBoard.setBoardEntry(verticalPositionChoice, horizontalPositionChoice, players.playerList.one.getSign());
+                    players.playerList.one.increaseTurns();
+                    lastTurn = "one";
+                    return;
+                } else if(firstTurnPlayerOfTheMatch == "two"){
+                    gameBoard.setBoardEntry(verticalPositionChoice, horizontalPositionChoice, players.playerList.two.getSign());
+                    players.playerList.two.increaseTurns();
+                    lastTurn = "two";
+                    return;
+                }
+            }
+            if(lastTurn == "one"){
+                gameBoard.setBoardEntry(verticalPositionChoice, horizontalPositionChoice, players.playerList.two.getSign());
+                players.playerList.two.increaseTurns();
+                lastTurn = "two";
+                return;
+            } else if(lastTurn == "two"){
+                gameBoard.setBoardEntry(verticalPositionChoice, horizontalPositionChoice, players.playerList.one.getSign());
+                players.playerList.one.increaseTurns();
+                lastTurn = "one";
+                return;
+            }
+        }
 
+    };
 
-
-    return {makeTurn};
+    return {setFirstTurnPlayerOfTheMatch, makeTurn,};
 })();
 
 
@@ -81,7 +106,19 @@ const playGame = (function(){
 // Console tests
 
 players.addNewPlayers("Rick", "Tom");
-playGame.makeTurn.two(2, 1,);
+playGame.setFirstTurnPlayerOfTheMatch.one();
 console.log({"Player One Sign": players.playerList.one.getSign()});
 console.log({"Player Two Sign": players.playerList.two.getSign()});
 console.log({"Board": gameBoard.getBoard()});
+
+
+function testTurn(h, v){
+    playGame.makeTurn(h, v);
+}
+
+testTurn(0, 2);
+testTurn(0, 0);
+testTurn(0, 1);
+testTurn(1, 2);
+testTurn(1, 2);
+
