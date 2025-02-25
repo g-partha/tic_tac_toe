@@ -1,0 +1,13 @@
+.container{
+
+}
+.game-board-ui{
+    display: grid;
+    grid-template-columns: repeat(3, 60px);
+    grid-template-rows: repeat(3, 60px);
+    gap: 10px;
+}
+.game-board-ui-cells{
+    background-color: black;
+    border: 2px solid red;
+}

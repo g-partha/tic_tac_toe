@@ -8,14 +8,14 @@ const players = (function () {
         const getScore = () => score;
         const resetScore = () => score = 0;
         const setSignX = () => sign = "X"; // The first player gets the "X" sign
-        const setSignY = () => sign = "Y";
+        const setSignO = () => sign = "O";
         const getSign = () => sign;
         const increaseTurns = () => turns++;
         const getTurns = () => turns;
         const resetTurns = () => turns = 0;
         return {
             getName, increaseScore, resetScore, getScore,
-            setSignX, setSignY, getSign, increaseTurns, getTurns, resetTurns,
+            setSignX, setSignO, getSign, increaseTurns, getTurns, resetTurns,
         };
     };
     const playerNames = { one: "", two: "", };
@@ -28,11 +28,11 @@ const players = (function () {
     };
     const reverseSign = function(){
         if(playerList.one.getSign() == "X"){
-            playerList.one.setSignY();
+            playerList.one.setSignO();
             playerList.two.setSignX();
-        } else if(players.playerList.one.getSign() == "Y"){
+        } else if(players.playerList.one.getSign() == "O"){
             playerList.one.setSignX();
-            playerList.two.setSignY();
+            playerList.two.setSignO();
         }
     }
     addNewPlayers("", "");
@@ -67,22 +67,27 @@ const gameBoard = (function () {
 const playGame = (function () {
     let firstTurnPlayerOfTheGame = "";
     let lastTurn = "";
-
-    const setfirstTurnPlayerOfTheGame = (function () {
+    const setFirstTurnPlayerOfTheGame = (function () {
         const one = () => {
             firstTurnPlayerOfTheGame = "one";
             players.playerList.one.setSignX();
-            players.playerList.two.setSignY();
+            players.playerList.two.setSignO();
         };
         const two = () => {
             firstTurnPlayerOfTheGame = "two";
             players.playerList.two.setSignX();
-            players.playerList.one.setSignY();
-        }
-        return { one, two }
+            players.playerList.one.setSignO();
+        };
+        const reset = () => {
+            firstTurnPlayerOfTheGame = "";
+        };
+        return { one, two, reset }
     })();
-
     const makeTurn = function (verticalPositionChoice, horizontalPositionChoice) {
+        if(!players.playerList.one.getName() || !players.playerList.one.getName()){
+            alert("Please Enter Your Names!");
+            return;
+        }
         if (!gameBoard.getBoardEntry(verticalPositionChoice, horizontalPositionChoice)) {
             let turns = players.playerList.one.getTurns() + players.playerList.one.getTurns();
             if (turns == 0) {
@@ -90,13 +95,15 @@ const playGame = (function () {
                     gameBoard.setBoardEntry(verticalPositionChoice, horizontalPositionChoice, players.playerList.one.getSign());
                     players.playerList.one.increaseTurns();
                     lastTurn = "one";
-                    results.resultActions();
+                    results.matchResultActions();
+                    results.gameResultActions();
                     return;
                 } else if (firstTurnPlayerOfTheGame == "two") {
                     gameBoard.setBoardEntry(verticalPositionChoice, horizontalPositionChoice, players.playerList.two.getSign());
                     players.playerList.two.increaseTurns();
                     lastTurn = "two";
-                    results.resultActions();
+                    results.matchResultActions();
+                    results.gameResultActions();
                     return;
                 }
             }
@@ -104,20 +111,20 @@ const playGame = (function () {
                 gameBoard.setBoardEntry(verticalPositionChoice, horizontalPositionChoice, players.playerList.two.getSign());
                 players.playerList.two.increaseTurns();
                 lastTurn = "two";
-                results.resultActions();
+                results.matchResultActions();
+                results.gameResultActions();
                 return;
             } else if (lastTurn == "two") {
                 gameBoard.setBoardEntry(verticalPositionChoice, horizontalPositionChoice, players.playerList.one.getSign());
                 players.playerList.one.increaseTurns();
                 lastTurn = "one";
-                results.resultActions();
+                results.matchResultActions();
+                results.gameResultActions();
                 return;
             }
         }
-
     };
-
-    return { setfirstTurnPlayerOfTheGame, makeTurn, };
+    return { setFirstTurnPlayerOfTheGame, makeTurn, };
 })();
 
 
@@ -129,25 +136,25 @@ const results = (function(){
         for(let i = 0; i < 3; i++){
             if(board[i][0] == "X" && board[i][0] == board[i][1] && board[i][1] == board[i][2]){
                 return "one";
-            } else if(board[i][0] == "Y" && board[i][0] == board[i][1] && board[i][1] == board[i][2]){
+            } else if(board[i][0] == "O" && board[i][0] == board[i][1] && board[i][1] == board[i][2]){
                 return "two";
             }
         }
         for(let j = 0; j < 0; j++){
             if(board[0][j] == "X" && board[0][j] == board[1][j] && board[1][j] == board[2][j]){
                 return "one";
-            } else if(board[0][j] == "Y" && board[0][j] == board[1][j] && board[1][j] == board[2][j]){
+            } else if(board[0][j] == "O" && board[0][j] == board[1][j] && board[1][j] == board[2][j]){
                 return "two";
             }
         }
         if(board[0][0] == "X" && board[0][0] == board[1][1] && board[1][1] == board[2][2]){
             return "one";
-        } else if(board[0][0] == "Y" && board[0][0] == board[1][1] && board[1][1] == board[2][2]){
+        } else if(board[0][0] == "O" && board[0][0] == board[1][1] && board[1][1] == board[2][2]){
             return "two";
         }
         if(board[0][2] == "X" && board[0][2] == board[1][1] && board[1][1] == board[2][0]){
             return "one";
-        } else if(board[0][2] == "Y" && board[0][2] == board[1][1] && board[1][1] == board[2][0]){
+        } else if(board[0][2] == "O" && board[0][2] == board[1][1] && board[1][1] == board[2][0]){
             return "two";
         }
         for(let i = 0; i < 3; i++){
@@ -157,11 +164,9 @@ const results = (function(){
                 }
             }
         }
-        return "draw"; //return draw not working
+        return "draw";
     };
-
-    // the code below is under work
-    const resultActions = function(){
+    const matchResultActions = function(){
         if (checkMatchResult() == "one") {
             players.playerList.one.increaseScore();
             players.reverseSign();
@@ -187,61 +192,122 @@ const results = (function(){
             console.log("draw"); //console log tests
         }
     }
-    // the code above is under work
+    const gameResultActions = function(){
+        if(players.playerList.one.getScore() == 5){
+            console.log("one wins the game");
+            players.addNewPlayers("", "");
+            playGame.setFirstTurnPlayerOfTheGame.reset();
+        } else if(players.playerList.two.getScore() == 5){
+            console.log("two wins the game");
+            players.addNewPlayers("", "");
+            playGame.setFirstTurnPlayerOfTheGame.reset();
+        }
 
-    return {resultActions};
+    }
+    return {matchResultActions, gameResultActions};
 })();
+
+
+
+
+
+const uiControls = (function(){
+    const playerOneNameInput = document.querySelector("#player-one-name");
+    const playerTwoNameInput = document.querySelector("#player-two-name");
+    const createPlayersButton = document.querySelector(".create-players-button");
+    const gameBoardUI = document.querySelector(".game-board-ui");
+    const gameBoardUICells = [];
+    function createBoardUI(){
+        gameBoardUICells.splice(0, gameBoardUICells.length);
+        for(let i = 0; i < 3; i++){
+            gameBoardUICells.push([]);
+            for(let j = 0; j < 3; j++){
+                gameBoardUICells[i][j] =  document.createElement("div");
+                gameBoardUICells[i][j].classList.toggle(".game-board-ui-cells");
+                gameBoardUICells[i][j].textContent = gameBoard.getBoardEntry(i, j);
+                gameBoardUICells[i][j].addEventListener("click", () => {
+                    playGame.makeTurn(i, j);
+                });
+                gameBoardUI.appendChild(gameBoardUICells[i][j]);
+            }
+        }
+    }
+    createBoardUI();
+
+})();
+
+
+
 
 
 
 
 // Console tests
 
-players.addNewPlayers("Rick", "Tom");
-playGame.setfirstTurnPlayerOfTheGame.one();
-console.log({ "Player One Sign": players.playerList.one.getSign() });
-console.log({ "Player Two Sign": players.playerList.two.getSign() });
 
+const tests = (function(){
+    function initiateGame(oneName, twoName, firstPlayer){
+        players.addNewPlayers(oneName, twoName);
+        if(firstPlayer == 1){
+            playGame.setFirstTurnPlayerOfTheGame.one();
 
-function XWins(){
-    playGame.makeTurn(0, 0);
-    playGame.makeTurn(1, 2);
-    playGame.makeTurn(1, 1);
-    playGame.makeTurn(2, 1);
-    playGame.makeTurn(2, 2);
-}
+        }
+        if(firstPlayer == 2){
+            playGame.setFirstTurnPlayerOfTheGame.two();
 
-function YWins(){
-    playGame.makeTurn(1, 0);
-    playGame.makeTurn(0, 0);
-    playGame.makeTurn(1, 2);
-    playGame.makeTurn(1, 1);
-    playGame.makeTurn(2, 1);
-    playGame.makeTurn(2, 2);
-}
+        }
+    
+    }
+    function displayGameStatus(){
+        console.log({ Player: "One", Name: players.playerList.one.getName(), Sign: players.playerList.one.getSign(), Score: players.playerList.one.getScore(),});
+        console.log({ Player: "Two", Name: players.playerList.two.getName(), Sign: players.playerList.two.getSign(), Score: players.playerList.two.getScore(),});
+        console.log({ "Board": gameBoard.getBoard().slice() });
+    }
+    function XWins(){
+        playGame.makeTurn(0, 0);
+        playGame.makeTurn(1, 2);
+        playGame.makeTurn(1, 1);
+        playGame.makeTurn(2, 1);
+        playGame.makeTurn(2, 2);
+    }
+    function YWins(){
+        playGame.makeTurn(1, 0);
+        playGame.makeTurn(0, 0);
+        playGame.makeTurn(1, 2);
+        playGame.makeTurn(1, 1);
+        playGame.makeTurn(2, 1);
+        playGame.makeTurn(2, 2);
+    }
+    function draw(){
+        playGame.makeTurn(0, 0);
+        playGame.makeTurn(0, 1);
+        playGame.makeTurn(0, 2);
+        playGame.makeTurn(1, 1);
+        playGame.makeTurn(1, 0);
+        playGame.makeTurn(2, 0);
+        playGame.makeTurn(2, 2);
+        playGame.makeTurn(1, 2);
+        playGame.makeTurn(2, 1);
+    }
+    return {initiateGame, displayGameStatus, XWins, YWins, draw}
+})();
 
-function draw(){
-    playGame.makeTurn(0, 0);
-    playGame.makeTurn(0, 1);
-    playGame.makeTurn(0, 2);
-    playGame.makeTurn(1, 0);
-    playGame.makeTurn(1, 1);
-    playGame.makeTurn(1, 2);
-    playGame.makeTurn(2, 0);
-    playGame.makeTurn(2, 1);
-    playGame.makeTurn(2, 2);
-}
+tests.initiateGame("Tom", "Rick", 1);
+tests.displayGameStatus();
 
-XWins();
-XWins();
-YWins();
-YWins();
-XWins();
-draw();
+tests.XWins();
+tests.XWins();
+tests.YWins();
+tests.YWins();
+tests.draw();
+tests.XWins();
+// tests.YWins();
+playGame.makeTurn(0, 2);
+tests.displayGameStatus();
 
+// tests.XWins();
 
+// tests.displayGameStatus();
 
-console.log({ "Board": gameBoard.getBoard() });
-
-console.log({"player one score": players.playerList.one.getScore(), "player two score": players.playerList.two.getScore(),});
-
+// tests.initiateGame("Jim", "Ron", 2);
+// tests.displayGameStatus();
