@@ -74,9 +74,6 @@ padding: 0 5px;
 .current-score > :first-child{
 grid-area: header;
 }
-.player-scores{
-
-}
 .game-board-ui{
     display: grid;
     grid-template-columns: repeat(3, 60px);
