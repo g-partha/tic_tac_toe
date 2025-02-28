@@ -1,4 +1,67 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 .container{
+    width: min-content;
+    margin: 50px auto;
+    padding: 20px;
+    display: grid;
+    gap: 10px;
+    background-color: #3f51b5b3;
+}
+.form{
+    background-color: antiquewhite;
+    padding: 10px;
+    display: grid;
+    gap: 10px;
+}
+.input-container{
+    display: flex;
+
+}
+.input-labels{
+flex: 1 0 auto;
+}
+#player-one-name, #player-two-name{
+width: 100px;
+}
+.create-players-button{
+
+}
+.game-status-field{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+}
+.current-turn-player{
+    background-color: green;
+    color:aliceblue;
+    box-shadow: 0 0 10px -5px black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    padding: 10px;
+}
+.current-score{
+    background-color: green;
+    color:aliceblue;
+    box-shadow: 0 0 10px -5px black;
+    display: grid;
+    grid-template-areas: "header header"
+                        "player-one-score player-two-score" ;
+    justify-items: center;
+    border-radius: 20px;
+    padding: 10px;
+}
+.current-score > :first-child{
+grid-area: header;
+}
+.player-scores{
 
 }
 .game-board-ui{
@@ -8,6 +71,9 @@
     gap: 10px;
 }
 .game-board-ui-cells{
+    color: white;
     background-color: black;
-    border: 2px solid red;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
