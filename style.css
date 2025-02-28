@@ -17,9 +17,13 @@
     padding: 10px;
     display: grid;
     gap: 10px;
+    justify-items: center;
+    box-shadow: 0 0 10px -5px black;
+    border-radius: 10px;
 }
 .input-container{
     display: flex;
+    gap: 5px;
 
 }
 .input-labels{
@@ -27,9 +31,18 @@ flex: 1 0 auto;
 }
 #player-one-name, #player-two-name{
 width: 100px;
+border-radius: 10px;
+border: 1px solid grey;
+padding: 0 5px;
 }
 .create-players-button{
-
+    width: 100px;
+    height: 25px;
+    border: none;
+    background-color: rgb(100, 20, 153);
+    color: white;
+    box-shadow: 0 0 15px -5px black;
+    border-radius: 15px;
 }
 .game-status-field{
     display: flex;
@@ -69,6 +82,7 @@ grid-area: header;
     grid-template-columns: repeat(3, 60px);
     grid-template-rows: repeat(3, 60px);
     gap: 10px;
+    margin-top: 5px;
 }
 .game-board-ui-cells{
     color: white;
@@ -76,4 +90,5 @@ grid-area: header;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 0 10px -5px black;
 }
